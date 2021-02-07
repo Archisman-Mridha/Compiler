@@ -378,3 +378,81 @@ Similarly, inm our Parser where we evaluate our expressions, we introduce a list
 ```
 
 Next in the matchToken( ) funtion, we catch the errors, if we don't find expected tokens.
+
+```cs
+
+    if ( Current.tokenType == tokenType )
+        // do stuff
+
+    // else catch the error
+    errors.Add($"ERROR: Unexpected token <{ Current.tokenType }>, expected <{ tokenType }>");
+```
+
+For example, after a numberExpression we expect an operator in a binary expression. If we don't get that expected operator, then we throw the error, that we got a bad token.
+
+In our main function, before we evaluate the expression, we check whether the error list is empty or has some elements. If there are errors, then we don't evaluate the wrong expression and print the errors.
+
+```cs
+
+    if ( parsedObject.errors.Any( ) )
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+
+        foreach ( var error in parser.Errors )
+            Console.WriteLine( error );
+
+        Console.ForegroundColor = ConsoleColor.White;
+    }
+
+    else
+    {
+        var evaluatedResult = new Evaluator( parsedObject.root );
+        var result = evaluatedResult.Evaluate( );
+
+        Console.WriteLine( result );
+    }
+```
+
+## Paranthesized Expressions
+
+Let's make our compiler recognize paranthesized Expressions. First create a class ParanthesizedExpressionSyntax class, which inherits from the ExpressionSyntax class. In the constructor of the class, we take in 3 parameters : openParanthesis, the expression inside paranthesis and closeParanthesis.
+
+```cs
+
+    sealed class ParanthesizedExpressionSyntax: ExpressionSyntax
+    {
+        public ParanthesizedExpressionSyntax ( TokenDetails openParanthesis, ExpressionSyntax expression, TokenDetails closeParanthesis )
+        {
+            this.openParanthesis = openParanthesis;
+            this.expression = expression;
+            this.closeParanthesis = closeParanthesis;
+        }
+
+        public TokenDetails openParanthesis { get; }
+        public TokenDetails closeParanthesis { get; }
+        public ExpressionSyntax expression { get; }
+    }
+```
+
+Also we need tp define the abstract methods, since it is inheriting from an abstract class.
+
+```cs
+
+    public override Tokentypes tokenType => Tokentypes.ParanthesizedExpression;
+
+    public override IEnumerable<SyntaxNode> GetChildren ( )
+    {
+        yield return openParanthesis;
+        yield return expression;
+        yield return closeParanthesis;
+    }
+```
+
+Come to the evaluator class, where we will parse the paranthesized expression. In the
+EvaluateExpression( ) function :
+
+```cs
+
+    if ( node is ParanthesizedExpressionSyntax p )
+        return EvaluateExpression( p.expression );
+```
