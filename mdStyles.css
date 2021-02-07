@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+* {
+
+    font-family: 'Source Code Pro';
+    font-size: 1.5rem;
+    font-style: italic;
+}
+
+p {
+
+    font-style: normal;
+    font-family: 'Montserrat';
+    letter-spacing: 1px;
+    margin: 2rem 0;
+}
+
+h1 {
+
+    font-size: 3rem;
+}
+
+h2 {
+
+    font-size: 2rem;
+    color: pink;
+    margin: 9rem 0 5rem 0;
+}
